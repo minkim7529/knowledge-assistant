@@ -44,6 +44,9 @@
 - [x] 검색 정확도 평가셋 작성 및 실행
 - [x] 프론트엔드 배포 (Vercel): https://frontend-two-zeta-32.vercel.app
 - [x] 백엔드 배포 (Render): https://knowledge-assistant-backend-e7xj.onrender.com
+- [x] 실제 배포 사이트에서 접근 코드 → 업로드 라이브러리 → 질문/답변/인용까지 브라우저로 최종 검증 완료
+
+**7단계(마무리) 전부 완료.**
 
 라이브 테스트/배포에서 발견/수정한 것:
 - 임베딩 모델이 `text-embedding-004`에서 `gemini-embedding-001`로 교체됨 (output_dimensionality=768로 강제해 기존 스키마 유지)
