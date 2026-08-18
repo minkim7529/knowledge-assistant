@@ -12,7 +12,7 @@ services:
       - key: GEMINI_API_KEY
         sync: false
       - key: GEMINI_MODEL
-        value: gemini-3.6-flash
+        value: gemini-flash-lite-latest
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_SERVICE_KEY

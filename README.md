@@ -43,13 +43,17 @@
 - [x] 접근 제한(passcode) 게이트 — `APP_PASSCODE` 설정 시에만 활성화, 로컬 개발은 영향 없음
 - [x] 검색 정확도 평가셋 작성 및 실행
 - [x] 프론트엔드 배포 (Vercel): https://frontend-two-zeta-32.vercel.app
-- [ ] 백엔드 배포 (Render) — 진행 중
+- [x] 백엔드 배포 (Render): https://knowledge-assistant-backend-e7xj.onrender.com
 
-라이브 테스트에서 발견/수정한 것:
+라이브 테스트/배포에서 발견/수정한 것:
 - 임베딩 모델이 `text-embedding-004`에서 `gemini-embedding-001`로 교체됨 (output_dimensionality=768로 강제해 기존 스키마 유지)
-- 생성 모델도 `gemini-2.5-flash`가 신규 키에서 제공 종료되어 `gemini-3.6-flash`로 교체
+- 생성 모델도 `gemini-2.5-flash`가 신규 키에서 제공 종료되어 `gemini-3.6-flash`로 교체했다가, 무료 티어 일일 할당량(모델당 하루 20회)을 테스트하며 소진해 더 넉넉한 `gemini-flash-lite-latest`로 다시 교체
 - 프론트엔드 채팅 말풍선에서 긴 인용 텍스트가 flex 컨테이너 폭 제약을 무시하고 넘치던 CSS 버그 수정 (`min-w-0` 체인)
 - 답변에 마크다운 기호가 그대로 노출되던 것을 프롬프트에서 방지
+- Render 무료 플랜(512MB)은 `sentence-transformers`/torch를 로드하다 포트 바인딩 타임아웃으로 배포가 실패해, 로컬 cross-encoder 재순위화를 Gemini 기반 재순위화로 교체
+- Gemini의 `generate_content_stream`을 배포 환경에서 디버깅하던 중 실제 원인이 스트리밍이 아니라 위 할당량 문제였음을 확인. 다만 이미 non-streaming 호출 후 텍스트를 잘라 SSE로 순차 전송하는 방식으로 바꿔둔 상태라 그대로 유지 (진짜 토큰 스트리밍은 아니지만 프론트엔드에는 점진적으로 표시됨)
+
+**알려진 제약**: Gemini 무료 API 키는 모델당 하루 요청 수가 제한적이다(예: `gemini-3.6-flash`는 20회/일). 공개 데모를 많이 테스트하면 429 오류가 날 수 있으며, 유료 플랜으로 올리거나 요청이 적은 모델로 바꿔서 완화할 수 있다.
 
 ## 검색 정확도 평가
 

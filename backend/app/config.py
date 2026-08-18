@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-3.6-flash"
+    gemini_model: str = "gemini-flash-lite-latest"
     supabase_url: str = ""
     supabase_service_key: str = ""
     supabase_image_bucket: str = "images"

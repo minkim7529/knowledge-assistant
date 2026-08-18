@@ -86,13 +86,14 @@ class GeminiService:
             f"[{i + 1}] {block}" for i, block in enumerate(context_blocks)
         )
         prompt = f"{ANSWER_SYSTEM_PROMPT}\n\n--- 근거 ---\n{context}\n\n--- 질문 ---\n{question}"
-        stream = self._client.models.generate_content_stream(
+        response = self._client.models.generate_content(
             model=self._model,
             contents=prompt,
         )
-        for chunk in stream:
-            if chunk.text:
-                yield chunk.text
+        text = response.text or ""
+        chunk_size = 20
+        for start in range(0, len(text), chunk_size):
+            yield text[start : start + chunk_size]
 
 
 @lru_cache
