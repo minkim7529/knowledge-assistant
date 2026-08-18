@@ -58,14 +58,12 @@ export function UploadZone({ onUploaded }: Props) {
           handleFiles(e.dataTransfer.files);
         }}
         onClick={() => inputRef.current?.click()}
-        className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center text-sm transition-colors ${
-          isDragging
-            ? "border-blue-400 bg-blue-50 dark:bg-blue-950"
-            : "border-neutral-300 dark:border-neutral-700"
+        className={`cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center text-sm transition-colors ${
+          isDragging ? "border-accent bg-accent-soft" : "border-border bg-accent-soft/40 hover:bg-accent-soft"
         }`}
       >
-        <p className="font-medium">문서·이미지를 드래그하거나 클릭해서 업로드</p>
-        <p className="mt-1 text-xs text-neutral-500">PDF · DOCX · TXT · PNG · JPG · WEBP</p>
+        <p className="font-semibold text-foreground">문서·이미지를 드래그하거나 클릭해서 업로드</p>
+        <p className="mt-1 text-xs text-muted">PDF · DOCX · TXT · PNG · JPG · WEBP</p>
         <input
           ref={inputRef}
           type="file"
@@ -74,7 +72,7 @@ export function UploadZone({ onUploaded }: Props) {
           onChange={(e) => handleFiles(e.target.files)}
         />
       </div>
-      {status && <p className="text-xs text-neutral-500">{status}</p>}
+      {status && <p className="px-1 text-xs text-muted">{status}</p>}
     </div>
   );
 }

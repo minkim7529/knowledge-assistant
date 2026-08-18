@@ -33,20 +33,26 @@ export function PasscodeGate({ children }: { children: React.ReactNode }) {
 
   if (status === "locked") {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <form onSubmit={handleSubmit} className="flex w-64 flex-col gap-3">
-          <h1 className="text-center text-sm font-medium">접근 코드를 입력하세요</h1>
+      <div className="flex h-screen w-full items-center justify-center bg-bg">
+        <form
+          onSubmit={handleSubmit}
+          className="flex w-72 flex-col gap-3 rounded-2xl border border-border bg-surface p-6 shadow-sm"
+        >
+          <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-sm font-bold text-accent-foreground">
+            지
+          </span>
+          <h1 className="text-center text-sm font-semibold text-foreground">접근 코드를 입력하세요</h1>
           <input
             type="password"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             autoFocus
-            className="rounded-lg border border-neutral-300 px-4 py-2 text-sm outline-none focus:border-blue-400 dark:border-neutral-700 dark:bg-neutral-900"
+            className="rounded-xl border border-border bg-bg px-4 py-2 text-sm text-foreground outline-none focus:border-accent"
           />
           {error && <p className="text-center text-xs text-red-500">코드가 올바르지 않습니다.</p>}
           <button
             type="submit"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white"
+            className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
           >
             입장
           </button>

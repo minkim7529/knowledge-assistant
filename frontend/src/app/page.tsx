@@ -5,7 +5,7 @@ import { PasscodeGate } from "@/components/PasscodeGate";
 export default function Home() {
   return (
     <PasscodeGate>
-      <div className="flex h-screen w-full">
+      <div className="flex h-screen w-full bg-bg">
         <LibrarySidebar />
         <ChatPanel />
       </div>
