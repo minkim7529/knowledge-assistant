@@ -1,3 +1,4 @@
+import json
 from collections.abc import Iterator
 from functools import lru_cache
 
@@ -8,6 +9,13 @@ from app.config import get_settings
 
 EMBEDDING_MODEL = "gemini-embedding-001"
 EMBEDDING_DIMENSIONS = 768
+
+RERANK_PROMPT = (
+    "다음은 사용자 질문과 번호가 매겨진 근거 후보 목록이다. "
+    "질문에 가장 관련 있는 근거를 관련도 순서대로 최대 {top_k}개 골라, "
+    "후보 번호로만 이루어진 JSON 배열로 답해라. 예: [2, 0, 5]\n\n"
+    "질문: {question}\n\n후보:\n{candidates}"
+)
 
 CAPTION_PROMPT = (
     "이 이미지에 무엇이 보이는지 한국어로 상세히 설명해줘. "
@@ -51,6 +59,27 @@ class GeminiService:
             ],
         )
         return response.text.strip()
+
+    def rerank(self, question: str, candidates: list[str], top_k: int) -> list[int]:
+        if len(candidates) <= 1:
+            return list(range(len(candidates)))
+
+        numbered = "\n".join(f"{i}: {text[:300]}" for i, text in enumerate(candidates))
+        prompt = RERANK_PROMPT.format(top_k=top_k, question=question, candidates=numbered)
+        try:
+            response = self._client.models.generate_content(
+                model=self._model,
+                contents=prompt,
+                config=types.GenerateContentConfig(response_mime_type="application/json"),
+            )
+            indices = json.loads(response.text)
+            parsed = [i for i in indices if isinstance(i, int) and 0 <= i < len(candidates)][:top_k]
+            if parsed:
+                return parsed
+        except (genai.errors.APIError, json.JSONDecodeError, TypeError):
+            pass
+        # Gemini 호출/파싱 실패 시 하이브리드 검색(RRF) 순서를 그대로 사용
+        return list(range(min(top_k, len(candidates))))
 
     def stream_answer(self, question: str, context_blocks: list[str]) -> Iterator[str]:
         context = "\n\n".join(

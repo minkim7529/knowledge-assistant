@@ -2,10 +2,10 @@ from dataclasses import dataclass
 
 from app.db.client import get_supabase
 from app.services.gemini import get_gemini_service
-from app.services.rerank import rerank
 
 RRF_K = 60
 CANDIDATE_COUNT = 20
+RERANK_TOP_K = 5
 
 
 @dataclass
@@ -29,7 +29,8 @@ def _rrf_merge(ranked_lists: list[list[str]]) -> dict[str, float]:
 
 def hybrid_search(query: str) -> list[RetrievedItem]:
     supabase = get_supabase()
-    query_embedding = get_gemini_service().embed_text(query)
+    gemini = get_gemini_service()
+    query_embedding = gemini.embed_text(query)
 
     vector_chunks = (
         supabase.rpc(
@@ -89,4 +90,8 @@ def hybrid_search(query: str) -> list[RetrievedItem]:
     candidate_keys = sorted(scores, key=lambda k: scores[k], reverse=True)
     candidates = [items_by_key[key] for key in candidate_keys]
 
-    return rerank(query, candidates)
+    if not candidates:
+        return []
+
+    order = gemini.rerank(query, [c.text for c in candidates], RERANK_TOP_K)
+    return [candidates[i] for i in order]
