@@ -18,17 +18,18 @@
                           검색 시점: 하이브리드 검색
                     (pgvector 코사인 유사도 + Postgres BM25/FTS)
                           → RRF로 결과 병합
-                          → 로컬 Cross-Encoder로 재순위화
+                          → Gemini에게 후보를 다시 보여주고 관련도 순으로 재순위화
                           → 상위 K개를 Gemini에 근거로 전달, 인용 포함 답변 생성/스트리밍
 ```
 
 ## 기술 스택
 
-- 백엔드: Python 3.14 + FastAPI
+- 백엔드: Python (배포는 3.12, 로컬은 3.14) + FastAPI
 - 프론트엔드: Next.js 15 + TypeScript + Tailwind
 - DB/벡터스토어: Supabase (Postgres + pgvector)
-- LLM/임베딩/비전: Gemini API
-- 재순위화: sentence-transformers cross-encoder (로컬)
+- LLM/임베딩/비전/재순위화: Gemini API 단일 사용
+
+재순위화는 원래 `sentence-transformers` 로컬 cross-encoder로 구현했으나, torch 의존성이 Render 무료 플랜(512MB)에서 포트 바인딩을 막을 만큼 무거워서 Gemini에게 후보를 다시 보여주고 관련도 순으로 골라달라고 요청하는 방식(LLM 기반 재순위화)으로 교체했다. 호출이 실패하면 RRF 순서로 자동 폴백한다.
 
 ## 진행 상태
 
@@ -41,7 +42,8 @@
 - [x] 실제 Gemini API + Supabase로 업로드→검색→답변 전체 흐름 라이브 검증 (텍스트 문서 + 이미지 모두)
 - [x] 접근 제한(passcode) 게이트 — `APP_PASSCODE` 설정 시에만 활성화, 로컬 개발은 영향 없음
 - [x] 검색 정확도 평가셋 작성 및 실행
-- [ ] 배포 (Vercel/Render)
+- [x] 프론트엔드 배포 (Vercel): https://frontend-two-zeta-32.vercel.app
+- [ ] 백엔드 배포 (Render) — 진행 중
 
 라이브 테스트에서 발견/수정한 것:
 - 임베딩 모델이 `text-embedding-004`에서 `gemini-embedding-001`로 교체됨 (output_dimensionality=768로 강제해 기존 스키마 유지)
@@ -58,7 +60,7 @@ cd backend
 ./.venv/Scripts/python.exe -m eval.run_eval
 ```
 
-현재 결과: **Hit@5 8/8 (100%), MRR 1.00** — 5개의 서로 다른 문서/이미지를 모두 정확히 rank 1로 구분해낸다. (다만 코퍼스가 5개 항목으로 작아 100%가 나오기 쉬운 조건이라는 점은 참고. 문서를 더 추가하며 이 스크립트로 계속 검증할 수 있다.)
+현재 결과: **Hit@5 8/8 (100%), MRR 0.94** — 5개의 서로 다른 문서/이미지를 모두 top-5 안에서 찾아낸다. (다만 코퍼스가 5개 항목으로 작아 100%가 나오기 쉬운 조건이라는 점은 참고. 문서를 더 추가하며 이 스크립트로 계속 검증할 수 있다.)
 
 ## 로컬 개발
 
