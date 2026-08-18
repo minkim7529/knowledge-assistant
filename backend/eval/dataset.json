@@ -1,0 +1,42 @@
+[
+  {
+    "question": "김치찌개에 어떤 재료가 들어가?",
+    "expected_type": "chunk",
+    "expected_marker": "신 김치 300g"
+  },
+  {
+    "question": "김치찌개 국물을 진하게 만들려면 어떻게 해야 해?",
+    "expected_type": "chunk",
+    "expected_marker": "돼지고기를 충분히 볶아"
+  },
+  {
+    "question": "조선왕조실록은 언제 유네스코 세계기록유산으로 등재됐어?",
+    "expected_type": "chunk",
+    "expected_marker": "1997년"
+  },
+  {
+    "question": "사관은 왜 왕이 살아있을 때 실록을 못 보게 했어?",
+    "expected_type": "chunk",
+    "expected_marker": "사관의 독립성"
+  },
+  {
+    "question": "태양전지는 어떤 원리로 전기를 만들어?",
+    "expected_type": "chunk",
+    "expected_marker": "광기전력 효과"
+  },
+  {
+    "question": "태양광 발전의 단점이 뭐야?",
+    "expected_type": "chunk",
+    "expected_marker": "초기 설치 비용"
+  },
+  {
+    "question": "이 프로젝트는 어떤 데이터베이스를 사용해?",
+    "expected_type": "chunk",
+    "expected_marker": "Supabase의 Postgres"
+  },
+  {
+    "question": "파이썬 문자열 포맷 코드 중 %d는 무슨 뜻이야?",
+    "expected_type": "image",
+    "expected_marker": "정수(Integer)"
+  }
+]

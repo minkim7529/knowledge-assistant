@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: knowledge-assistant-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.6-flash
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_IMAGE_BUCKET
+        value: images
+      - key: APP_PASSCODE
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
